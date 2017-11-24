@@ -186,9 +186,8 @@ footer{
 	background: var(--color-principal);
 	border-radius: 50%;
 	z-index: 9999;
-	transform:scale(.001);
-	transition: .3s all;
-	
+	transform: scale(0.001);
+	transition: 0.3s all;
 }
 
 	.full{
@@ -196,10 +195,10 @@ footer{
 	}
 
 .msj{
-	transition: .3s all;
+	transition: 0.3s all;
 }
+
 .escondido{
 	opacity: 0;
 	margin-top: 50px;
 }
-

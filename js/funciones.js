@@ -1,15 +1,14 @@
 function cargarContactos(){
 	if (!localStorage.getItem('idUsuario')) {
-		window.location.assign('login.html')
+		window.location.assign('login.html');
 	}
 	crearContactos();
 }
 
 function crearContactos(){
-	document.querySelector('section').style.opacity="1"
-	document.querySelector('h1').style.opacity="1"
-	document.querySelector('i').style.opacity="1"
-
+	document.querySelector('section').style.opacity="1";
+	document.querySelector('h1').style.opacity="1";
+	document.querySelector('i').style.opacity="1";
 	contactosAjax = new XMLHttpRequest();
 	contactosAjax.open('GET','http://148.220.211.95:88/apps2017/sesion3/php/contactos.php');
 	contactosAjax.send();
@@ -37,11 +36,10 @@ function crearContactos(){
 
 function verChat(id){
 	localStorage.setItem('idChat',id);
-	document.getElementById('circulo').classList.add('full')
-	setTimeout(function(){
+	document.getElementById('circulo').classList.add('full');
+	setTimeout(function() {
 		window.location.assign('chat.html');
-	},1000);
-	
+	}, 1000);
 }
 
 function animacionContactos(){
@@ -56,27 +54,27 @@ function animacionContactos(){
 
 function enviarMsj(){
 	mensaje = document.getElementById('mensaje').value;
-	if (mensaje!= ""){
-		bandeja = document.querySelector('article');
-		bandeja.innerHTML += "<div class='msj saliente escondido'>"+mensaje+"</div>";
-		setTimeout(function(){
-			document.querySelector('.escondido').classList.remove('escondido')
-		},100)
-		document.getElementById('mensaje').value = "";
-		//ENVIAR A LA BASE DE DATOS
-		idSaliente = localStorage.getItem('idUsuario');
-		idEntrante = localStorage.getItem('idChat');
-		enviarAjax = new XMLHttpRequest();
-		enviarAjax.open('GET','http://148.220.211.95:88/apps2017/sesion3/php/mensaje.php?idS='+idSaliente+'&idE='+idEntrante+'&msj='+mensaje);
-		enviarAjax.send();
-		enviarAjax.onreadystatechange = function(){
-			if (enviarAjax.readyState == 4 && enviarAjax.status == 200) {
-				console.log('ENVIADO!')
-			}
-		}
-	}else{
-		navigator.vibrate('300')
-	}
+  if (mensaje != "") {
+  	bandeja = document.querySelector('article');
+  	bandeja.innerHTML += "<div class='msj saliente escondido'>"+mensaje+"</div>";
+		setTimeout(function() {
+			document.querySelector('.escondido').classList.remove('escondido');
+		}, 100);
+  	document.getElementById('mensaje').value = "";
+  	//ENVIAR A LA BASE DE DATOS
+  	idSaliente = localStorage.getItem('idUsuario');
+  	idEntrante = localStorage.getItem('idChat');
+  	enviarAjax = new XMLHttpRequest();
+  	enviarAjax.open('GET','http://148.220.211.95:88/apps2017/sesion3/php/mensaje.php?idS='+idSaliente+'&idE='+idEntrante+'&msj='+mensaje);
+  	enviarAjax.send();
+  	enviarAjax.onreadystatechange = function(){
+  		if (enviarAjax.readyState == 4 && enviarAjax.status == 200) {
+  			console.log('ENVIADO!')
+  		}
+  	}
+  }else {
+    navigator.vibrate('300');
+  }
 }
 
 function cargarChat(){
@@ -84,18 +82,17 @@ function cargarChat(){
 	idSaliente = localStorage.getItem('idUsuario');
 	idEntrante = localStorage.getItem('idChat');
 	cargarAjax = new XMLHttpRequest();
-	cargarAjax.open('GET', 'http://148.220.211.95:88/apps2017/sesion3/php/chat.php?idS='+idSaliente+'&idE='+idEntrante);
+	cargarAjax.open('GET', 'http://148.220.211.95:88/apps2017/sesion3/php/chat.php?idS='+idSaliente+'&idE=' + idEntrante);
 	cargarAjax.send();
 	cargarAjax.onreadystatechange = function(){
 		if (cargarAjax.readyState == 4 && cargarAjax.status == 200) {
 			mensajes = JSON.parse(cargarAjax.responseText);
-			//CARGAR DATOS DE CHAT
-			document.getElementById('nombre').innerHTML = mensajes[mensajes.length-1].nombre;
-			document.getElementById('foto').src=mensajes[mensajes.length-1].foto;
+      document.getElementById('nombre').innerHTML = mensajes[mensajes.length - 1].nombre;
+      document.getElementById('foto').src = mensajes[mensajes.length - 1].foto;
 
-			ultimoMensaje = mensajes.length - 1;
-			//CARGAR CHAT
-			for(i = 0; i<mensajes.length-1; i++){
+      ultimoMensaje = mensajes.length - 1;
+
+			for(i = 0; i<mensajes.length - 1; i++){
 				bandeja = document.querySelector('article');
 				if (mensajes[i].lado == "entrante") {
 					bandeja.innerHTML += "<div class='msj entrante'>"+mensajes[i].mensaje+"</div>"
@@ -104,52 +101,49 @@ function cargarChat(){
 				}
 			}
 
-			longPollingChat();
-		}
-	}	
-}
+      longPollingChat();
 
-function longPollingChat(){
-	ultimoAjax = new XMLHttpRequest();
-	ultimoAjax.open('GET','php/ultimoMensaje.php?idE='+idEntrante+'&idS='+idSaliente+'&ultimo='+ultimoMensaje);
-	ultimoAjax.send();
-	ultimoAjax.onreadystatechange = function(){
-		if (ultimoAjax.status == 200 && ultimoAjax.readyState == 4) {
-			ultimoJSON = JSON.parse(ultimoAjax.responseText);
-			console.log(ultimoJSON)
-			console.log(ultimoMensaje)
-			if (ultimoJSON.nuevo == "si") {
-				if (ultimoJSON.lado == "entrante") {
-					bandeja.innerHTML+="<div class='msj entrante'>"+
-					ultimoJSON.mensaje + "</div>"
-				}
-				ultimoMensaje++;
-				
-			}
 		}
 	}
-	bandeja.scrollTop = bandeja.scrollHeight;
-	setTimeout(function(){
-		longPollingChat()
-	},1000)
 }
 
-function regresar(){
-	document.querySelector('article').style.transition=".5s all"
-	document.querySelector('article').style.opacity="0"
-	//BOTON ATRAS
-	document.querySelector('.fa').style.transition=".5s all"
-	document.querySelector('.fa').style.opacity="0"
-	//FOTO
-	document.querySelector('#foto').style.transition=".5s all"
-	document.querySelector('#foto').style.opacity="0"
-	//NOMBRE
-	document.querySelector('#nombre').style.transition=".5s all"
-	document.querySelector('#nombre').style.opacity="0"
-	//FOOTER
-	document.querySelector('footer').style.transition=".5s all"
-	document.querySelector('footer').style.opacity="0"
-	setTimeout(function(){
+function longPollingChat() {
+  ultimoAjax = new XMLHttpRequest();
+  ultimoAjax.open('GET', 'http://148.220.211.95:88/apps2017/sesion3/php/ultimoMensaje.php?idE=' + idEntrante + '&idS=' + idSaliente + '&ultimo=' + ultimoMensaje);
+  ultimoAjax.send();
+  ultimoAjax.onreadystatechange = function() {
+    if (ultimoAjax.status = 200 && ultimoAjax.readyState == 4) {
+      ultimoJSON = JSON.parse(ultimoAjax.responseText);
+      if (ultimoJSON.nuevo == "si") {
+        if (ultimoJSON.lado == "entrante") {
+					bandeja.innerHTML += "<div class='msj entrante'>" + ultimoJSON.mensaje +"</div>"
+				}
+        ultimoMensaje++;
+      }
+    }
+  }
+  bandeja.scrollTop = bandeja.scrollHeight
+  setTimeout(function () {
+    longPollingChat()
+  }, 1000);
+}
+
+function regresar() {
+	document.querySelector('article').style.transition="0.5s all";
+	document.querySelector('article').style.opacity="0";
+
+	document.querySelector('.fa').style.transition="0.5s all";
+	document.querySelector('.fa').style.opacity="0";
+
+	document.querySelector('#foto').style.transition="0.5s all";
+	document.querySelector('#foto').style.opacity="0";
+
+	document.querySelector('#nombre').style.transition="0.5s all";
+	document.querySelector('#nombre').style.opacity="0";
+
+	document.querySelector('footer').style.transition="0.5s all";
+	document.querySelector('footer').style.opacity="0";
+	setTimeout(function() {
 		window.location.assign('index.html')
-	},1000)
+	}, 1000);
 }
